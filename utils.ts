@@ -14,12 +14,19 @@ export async function downloadAsset(url: string, dest: string) {
   }
   const destFile = path.join(dest, path.basename(url))
   if (!fse.pathExistsSync(destFile)) {
-    await pipeline(
-      //
-      got.stream(url),
-      fse.createWriteStream(destFile)
-    )
-    console.log(`${url} downloaded!`)
+    try {
+      await pipeline(
+        //
+        got.stream(url),
+        fse.createWriteStream(destFile)
+      )
+      console.log(`${url} downloaded!`)
+    } catch (error) {
+      console.log(`${url} download failed`)
+      fse.removeSync(destFile)
+      console.log(error)
+      return ''
+    }
   }
   // else {
   //   // console.log(`${url} skipped!`)
@@ -68,6 +75,7 @@ export function outputMd({
 }
 
 export async function doExif(filePath: string, time: string) {
+  if (!filePath) return
   try {
     console.log(`write exif to ${filePath}`)
     await exiftool.write(filePath, {

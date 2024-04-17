@@ -11,7 +11,7 @@ const CHILD_ID = process.env.CHILD_ID
 export async function getSignData(date: string): Promise<SignItem[]> {
   try {
     // @ts-ignore
-    const { body } = await got
+    const data = await got
       .post('https://zths.szy.cn/ZTHServer/signmanageserver/signin/appHandle', {
         form: {
           reqcode: '10934',
@@ -28,6 +28,8 @@ export async function getSignData(date: string): Promise<SignItem[]> {
       })
       .json()
 
+    // console.log(data)
+    const { body } = data as any
     if (body && body.list) {
       return body.list ?? []
     }
