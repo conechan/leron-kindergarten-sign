@@ -56,6 +56,7 @@ async function processSign(signList: SignItem[], dateFormatted: string) {
       return getImageUrl(item.img)
     })
     .flat()
+    .filter(item => item)
 
   // 没有任何图片了
   if (images.length === 0) return
@@ -70,8 +71,10 @@ async function processSign(signList: SignItem[], dateFormatted: string) {
   for (const signItem of signList) {
     const images = getImageUrl(signItem.img)
     for (const image of images) {
-      const filePath = await downloadAsset(image, signItemPath)
-      await doExif(filePath, signItem.createtime)
+      if (image) {
+        const filePath = await downloadAsset(image, signItemPath)
+        await doExif(filePath, signItem.createtime)
+      }
     }
   }
 
